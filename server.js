@@ -2,12 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const querystring = require('querystring');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+
+// 📁 Servir archivos estáticos como el HTML de confirmación
+app.use(express.static(path.join(__dirname)));
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -57,13 +61,10 @@ app.get('/callback', async (req, res) => {
       }
     );
 
-    const { access_token, refresh_token } = response.data;
+    const { refresh_token } = response.data;
 
-    // Aquí puedes redirigir al frontend o mostrar los tokens directamente
-    res.json({
-      access_token,
-      refresh_token,
-    });
+    // ✅ Redirige a la página de éxito con el refresh_token en la URL
+    res.redirect(`${FRONTEND_URI}?refresh_token=${refresh_token}`);
   } catch (error) {
     console.error('Error en /callback:', error.response?.data || error.message);
     res.status(500).send('Error al obtener el token');
@@ -95,6 +96,10 @@ app.get('/refresh_token', async (req, res) => {
   }
 });
 
+app.get('/spotify-success', (req, res) => {
+  res.sendFile(path.join(__dirname, 'spotify-success.html'));
+});
+
 app.get('/', (req, res) => {
   res.send('🎧 API de Spotify funcionando correctamente.');
 });
@@ -102,3 +107,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`✅ Servidor escuchando en http://localhost:${port}`);
 });
+
