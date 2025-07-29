@@ -2,52 +2,49 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>✅ Spotify Vinculado</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Spotify Vinculado</title>
   <style>
     body {
       background-color: #121212;
       color: white;
       font-family: sans-serif;
-      padding: 2rem;
       text-align: center;
+      padding: 2rem;
     }
     .token {
-      background: #1DB954;
-      padding: 1rem;
-      border-radius: 8px;
-      word-break: break-all;
+      background-color: #1DB954;
+      color: black;
       font-weight: bold;
+      padding: 1rem;
       margin-top: 1rem;
+      border-radius: 8px;
+      word-break: break-word;
     }
     button {
       margin-top: 1rem;
       padding: 0.5rem 1rem;
-      background-color: #ffffff22;
+      background: #fff;
       border: none;
-      border-radius: 5px;
-      color: white;
+      border-radius: 6px;
       cursor: pointer;
-    }
-    button:hover {
-      background-color: #ffffff44;
     }
   </style>
 </head>
 <body>
-  <h1>✅ Spotify vinculado correctamente</h1>
-  <p>Copia este <strong>Refresh Token</strong> y pégalo en tu extensión:</p>
-  <div id="token" class="token">Cargando...</div>
+  <h1>✅ Spotify vinculado</h1>
+  <p>Copia y pega este token en tu extensión:</p>
+  <div class="token" id="refreshToken">Cargando...</div>
   <button onclick="copiar()">📋 Copiar token</button>
   <script>
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const token = params.get("refresh_token");
-    document.getElementById("token").textContent = token || "❌ Token no encontrado";
+    const div = document.getElementById("refreshToken");
+    div.textContent = token || "❌ Token no recibido";
 
     function copiar() {
       navigator.clipboard.writeText(token);
-      alert("Token copiado al portapapeles");
+      alert("✅ Token copiado");
     }
   </script>
 </body>
