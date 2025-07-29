@@ -1,0 +1,54 @@
+<!-- spotify-success.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>✅ Spotify Vinculado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+    .token {
+      background: #1DB954;
+      padding: 1rem;
+      border-radius: 8px;
+      word-break: break-all;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #ffffff22;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ffffff44;
+    }
+  </style>
+</head>
+<body>
+  <h1>✅ Spotify vinculado correctamente</h1>
+  <p>Copia este <strong>Refresh Token</strong> y pégalo en tu extensión:</p>
+  <div id="token" class="token">Cargando...</div>
+  <button onclick="copiar()">📋 Copiar token</button>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("refresh_token");
+    document.getElementById("token").textContent = token || "❌ Token no encontrado";
+
+    function copiar() {
+      navigator.clipboard.writeText(token);
+      alert("Token copiado al portapapeles");
+    }
+  </script>
+</body>
+</html>
