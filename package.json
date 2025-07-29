@@ -2,9 +2,9 @@
   "name": "spotify-auth-server",
   "version": "1.0.0",
   "description": "Servidor para autenticación de Spotify con token swap y refresh",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "keywords": [
     "spotify",
