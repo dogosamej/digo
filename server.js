@@ -27,6 +27,7 @@ const generateRandomString = (length) => {
   return text;
 };
 
+// 🔐 Inicia login con Spotify
 app.get('/login', (req, res) => {
   const state = generateRandomString(16);
   const scope = 'user-read-playback-state user-modify-playback-state streaming';
@@ -42,6 +43,7 @@ app.get('/login', (req, res) => {
   res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 });
 
+// 🔄 Callback de Spotify después del login
 app.get('/callback', async (req, res) => {
   const code = req.query.code || null;
 
@@ -63,7 +65,7 @@ app.get('/callback', async (req, res) => {
 
     const { refresh_token } = response.data;
 
-    // ✅ Redirige a la página de éxito con el refresh_token en la URL
+    // ✅ Redirige al frontend con el refresh_token
     res.redirect(`${FRONTEND_URI}?refresh_token=${refresh_token}`);
   } catch (error) {
     console.error('Error en /callback:', error.response?.data || error.message);
@@ -71,6 +73,7 @@ app.get('/callback', async (req, res) => {
   }
 });
 
+// 🔄 Endpoint para refrescar el token de acceso
 app.get('/refresh_token', async (req, res) => {
   const refresh_token = req.query.refresh_token;
 
@@ -96,10 +99,61 @@ app.get('/refresh_token', async (req, res) => {
   }
 });
 
+// ▶️ Reproducir canción usando refresh_token
+app.get('/play', async (req, res) => {
+  const { query, token } = req.query;
+
+  if (!query || !token) {
+    return res.status(400).json({ ok: false, error: 'Faltan parámetros' });
+  }
+
+  try {
+    // 🔄 Obtener access_token desde el refresh_token
+    const refreshRes = await axios.get(`${FRONTEND_URI}/refresh_token`, {
+      params: { refresh_token: token }
+    });
+
+    const access_token = refreshRes.data.access_token;
+
+    // 🔍 Buscar la canción por nombre
+    const searchRes = await axios.get('https://api.spotify.com/v1/search', {
+      headers: { Authorization: `Bearer ${access_token}` },
+      params: {
+        q: query,
+        type: 'track',
+        limit: 1
+      }
+    });
+
+    const track = searchRes.data.tracks.items[0];
+    if (!track) {
+      return res.json({ ok: false, error: 'Canción no encontrada' });
+    }
+
+    // ▶️ Intentar reproducir
+    await axios.put(
+      'https://api.spotify.com/v1/me/player/play',
+      { uris: [`spotify:track:${track.id}`] },
+      { headers: { Authorization: `Bearer ${access_token}` } }
+    );
+
+    res.json({
+      ok: true,
+      title: `${track.name} - ${track.artists.map(a => a.name).join(", ")}`
+    });
+
+  } catch (err) {
+    console.error('Error en /play:', err.response?.data || err.message);
+    res.status(500).json({ ok: false, error: 'Fallo en reproducción' });
+  }
+});
+
+// ✅ Página de éxito de login
 app.get('/spotify-success', (req, res) => {
   res.sendFile(path.join(__dirname, 'spotify-success.html'));
 });
 
+// 🟢 Verificación
 app.get('/', (req, res) => {
   res.send('🎧 API de Spotify funcionando correctamente.');
 });
