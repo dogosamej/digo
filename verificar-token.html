@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verificar Access Token - Spotify</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    input, button {
+      font-size: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #1db954;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    pre {
+      background: #222;
+      padding: 1rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎧 Verifica tu Access Token de Spotify</h2>
+  <input id="token" placeholder="Access Token" />
+  <button onclick="probar()">Verificar</button>
+  <pre id="resultado">Aquí aparecerá la respuesta...</pre>
+
+  <script>
+    function probar() {
+      const token = document.getElementById("token").value.trim();
+      fetch("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      })
+        .then(r => r.json())
+        .then(d => {
+          document.getElementById("resultado").textContent = JSON.stringify(d, null, 2);
+        })
+        .catch(err => {
+          document.getElementById("resultado").textContent = "❌ Error: " + err.message;
+        });
+    }
+  </script>
+</body>
+</html>
