@@ -27,7 +27,7 @@ const generateRandomString = (length) => {
 
 app.get("/login", (req, res) => {
   const state = generateRandomString(16);
-  const scope = "user-read-playback-state user-modify-playback-state streaming";
+  const scope = "user-read-playback-state user-modify-playback-state user-read-currently-playing streaming app-remote-control";
 
   const queryParams = querystring.stringify({
     response_type: "code",
